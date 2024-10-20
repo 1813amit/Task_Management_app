@@ -1,0 +1,167 @@
+    /* Container Styling */
+    .task-manager {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+        text-align: center;
+        color: #333;
+        font-size: 52px;
+        font-weight: 700;
+    }
+    
+    .add-task,
+    .search-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .add-task input,
+    .add-task textarea,
+    .add-task select,
+    .search-bar input {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+    }
+    
+    .add-task button,
+    ul.task-list button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .add-task button:hover,
+    ul.task-list button:hover {
+        background-color: #0056b3;
+    }
+    
+    /* Task List Styling */
+    ul.task-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    ul.task-list li {
+        background-color: #fff;
+        padding: 15px;
+        margin-bottom: 10px;
+        /* border-left: 6px solid #007bff; */
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    
+    
+    
+    
+    ul.task-list li h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+    }
+    
+    ul.task-list li p {
+        margin: 5px 0;
+        color: black;
+    }
+    
+    ul.task-list li button {
+        margin-right: 10px;
+    }
+    
+    /* Button Styles */
+    button.edit {
+        background-color: #ffc107;
+    }
+    
+    button.delete {
+        background-color: #dc3545;
+    }
+    
+    button.edit:hover {
+        background-color: #e0a800;
+    }
+    
+    button.delete:hover {
+        background-color: #c82333;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .task-manager {
+        width: 100%;
+        padding: 10px;
+        }
+    
+        ul.task-list li {
+        flex-direction: column;
+        }
+    } 
+    
+    /* Search Bar Styling with Icon */
+    .search-bar {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+    
+    .search-bar input {
+        padding: 10px 10px 10px 40px; /* Adjusted padding for the icon */
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+        width: 100%;
+    }
+    
+    /* Search Icon */
+    .search-bar .search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        background-image: url(''); /* Replace with your search icon file */
+        background-size: contain;
+        background-repeat: no-repeat;
+        pointer-events: none;
+    }
+    
+
+
+    
+      
+ 
+
+      
+      /* Color coding for priority */
+      .task-list .low {
+        background-color: green;
+      }
+      
+      .task-list .medium {
+        background-color: yellow;
+        color: black;
+      }
+      
+      .task-list .high {
+        background-color: red;
+      }
+      
+      /* Button styles inside task list */

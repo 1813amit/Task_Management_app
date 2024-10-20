@@ -1,101 +1,168 @@
-import Image from "next/image";
+"use client"; // This is a Client Component
+
+import { useState } from 'react';
+import './task.css';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [tasks, setTasks] = useState([
+    { id: 1, title: 'Task 1', description: 'Description 1', priority: 'high', completed: false },
+    { id: 2, title: 'Task 2', description: 'Description 2', priority: 'medium', completed: true },
+    { id: 3, title: 'Task 3', description: 'Description 3', priority: 'low', completed: false },
+  ]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'low' });
+  const [editableTaskId, setEditableTaskId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Function to add or update task
+  const addOrUpdateTask = () => {
+    if (!newTask.title.trim() || !newTask.description.trim()) {
+      alert('Title and description cannot be empty.');
+      return;
+    }
+
+    if (editableTaskId === null) {
+      const newId = tasks.length ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
+      const updatedTasks = [...tasks, { ...newTask, id: newId, completed: false }];
+      setTasks(updatedTasks);
+    } else {
+      const updatedTasks = tasks.map((task) =>
+        task.id === editableTaskId ? { ...newTask, id: editableTaskId, completed: task.completed } : task
+      );
+      setTasks(updatedTasks);
+      setEditableTaskId(null);
+    }
+
+    setNewTask({ title: '', description: '', priority: 'low' });
+  };
+
+  // Function to start editing a task
+  const startEditTask = (id) => {
+    setEditableTaskId(id);
+    const taskToEdit = tasks.find((task) => task.id === id);
+    setNewTask({ title: taskToEdit.title, description: taskToEdit.description, priority: taskToEdit.priority });
+  };
+
+  // Function to delete a task
+  const deleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  // Function to delete all tasks
+  const deleteAllTasks = () => {
+    setTasks([]);
+  };
+
+  // Function to toggle task completion
+  const toggleCompletion = (id) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
+  };
+
+  // Sort tasks by priority and completed status
+  const getSortedTasks = () => {
+    const priorityOrder = { high: 1, medium: 2, low: 3 };
+    return tasks
+      .filter(filterTasks)
+      .sort((a, b) => {
+        if (a.completed !== b.completed) {
+          return a.completed ? 1 : -1;
+        }
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+      });
+  };
+
+  // Function to filter tasks based on the search term
+  const filterTasks = (task) => {
+    return (
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  return (
+    <div className="min-h-screen p-8 pb-20 sm:p-20">
+      <div className="task-manager">
+        <h1>Task Manager</h1>
+
+        <div className="add-task">
+          <input
+            type="text"
+            placeholder="Task Title"
+            value={newTask.title}
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+          />
+          <textarea
+            placeholder="Task Description"
+            value={newTask.description}
+            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+          ></textarea>
+          <select
+            value={newTask.priority}
+            onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+          <button onClick={addOrUpdateTask}>
+            {editableTaskId === null ? 'Add Task' : 'Save Task'}
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search tasks..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        </div>
+
+        <button
+          onClick={deleteAllTasks}
+          style={{
+            margin: '10px 0',
+            backgroundColor: 'red',
+            color: 'white',
+            padding: '10px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          Delete All Tasks
+        </button>
+
+        <ul className="task-list">
+          {getSortedTasks().map((task) => (
+            <li key={task.id} className={`${task.completed ? 'completed' : 'pending'} ${task.priority}`}>
+              <h2>{task.title}</h2>
+              <p>{task.description}</p>
+              <p>Priority: {task.priority}</p>
+
+              <button
+                onClick={() => toggleCompletion(task.id)}
+                style={{
+                  backgroundColor: task.completed ? '#0056b3' : 'gray',
+                  color: 'white',
+                  padding: '5px 10px',
+                  borderRadius: '5px',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                {task.completed ? 'Completed' : 'Pending'}
+              </button>
+
+              <button onClick={() => startEditTask(task.id)}>Edit</button>
+              <button onClick={() => deleteTask(task.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
