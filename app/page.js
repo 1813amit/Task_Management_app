@@ -1,4 +1,4 @@
-"use client"; // This is a Client Component
+"use client"; 
 
 import { useState } from 'react';
 import './task.css';
